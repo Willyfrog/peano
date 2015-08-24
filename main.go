@@ -12,7 +12,7 @@ func main() {
 	pl := point.RandomSlice(100)
 	m := matrix.FindSmallerCellSize(&pl)
 	//fmt.Println("Initial matrix: ", m)
-	canvas := drawing.NewCanvas(0, "hello.png")
+	canvas := drawing.NewCanvas(1024, "hello.png")
 	m.Draw(canvas)
 	canvas.Save()
 	fmt.Println("Finished program")

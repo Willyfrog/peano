@@ -82,13 +82,12 @@ func (sq Square) Partition() [2][2]Square {
 
 func (sq *Square) Draw(canvas *drawing.Canvas) {
 	path := canvas.GetContext()
-	path.SetFillColor(color.RGBA{0x44, 0xff, 0x44, 0xff})
+	path.SetFillColor(color.RGBA{0x44, 0x44, 0x44, 0x00})
 	path.SetStrokeColor(color.RGBA{0x44, 0x44, 0x44, 0xff})
-	path.SetLineWidth(5)
+	path.SetLineWidth(1)
 	xo, yo := sq.Origin()
 	xe, ye := sq.End()
 	drawing.DrawSquare(xo, yo, xe, ye, path)
-	path.Close()
 	path.FillStroke()
 	for _, pt := range sq.Points {
 		pt.Draw(canvas)

@@ -1,9 +1,10 @@
 package drawing
 
 import (
+	"fmt"
 	"github.com/llgcode/draw2d/draw2dimg"
+	kit "github.com/llgcode/draw2d/draw2dkit"
 	"image"
-	"math"
 )
 
 const SCALE = 1000
@@ -34,25 +35,23 @@ func DrawSquare(xo, yo, xe, ye float32, path *CanvasContext) {
 	yoi := path.ToScale(yo)
 	xei := path.ToScale(xe)
 	yei := path.ToScale(ye)
-	path.MoveTo(xoi, yoi)
-	path.LineTo(xei, yoi)
-	path.LineTo(xei, yei)
-	path.LineTo(xoi, yei)
-	path.LineTo(xoi, yoi)
+	kit.Rectangle(path, xoi, yoi, xei, yei)
 }
 
 func DrawPoint(x, y float32, path *CanvasContext) {
 	xi := path.ToScale(x)
 	yi := path.ToScale(y)
-	path.MoveTo(xi, yi)
-	path.ArcTo(xi, yi, 1, 1, 0.0, 2.0*math.Pi)
+	kit.Circle(path, xi, yi, 0.1)
 }
 
 func NewCanvas(size int, fileName string) *Canvas {
-	var cnv Canvas
+	var cnv *Canvas
+	cnv = new(Canvas)
 	img := image.NewRGBA(image.Rect(0, 0, size, size))
-	cnv = Canvas{*img, fileName, size}
-	return &cnv
+	cnv.RGBA = *img
+	cnv.filename = fileName
+	cnv.size = size
+	return cnv
 }
 
 func (c *Canvas) Save() {
@@ -61,6 +60,6 @@ func (c *Canvas) Save() {
 
 func (c *Canvas) GetContext() *CanvasContext {
 	gc := draw2dimg.NewGraphicContext(&(c.RGBA))
-	cnv := CanvasContext{*gc, c.size}
+	cnv := CanvasContext{*gc, (*c).size}
 	return &cnv
 }

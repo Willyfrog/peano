@@ -100,15 +100,16 @@ func New(width float32, size int) Matrix {
 func (m *Matrix) Draw(canvas *drawing.Canvas) {
 	fmt.Println("drawing the matrix")
 	path := canvas.GetContext()
-	path.SetFillColor(color.RGBA{0x44, 0xff, 0x44, 0xff})
+	path.SetFillColor(color.RGBA{0xaa, 0xaa, 0xaa, 0xff})
 	path.SetStrokeColor(color.RGBA{0x44, 0x44, 0x44, 0xff})
 	path.SetLineWidth(5)
 	drawing.DrawSquare(0.0, 0.0, 1.0, 1.0, path)
-	path.Close()
 	path.FillStroke()
-	// for _, row := range m.Squares {
-	// 	for _, sq := range row {
-	// 		sq.Draw(canvas)
-	// 	}
-	// }
+
+	for _, row := range m.Squares {
+		for _, sq := range row {
+			sq.Draw(canvas)
+		}
+
+	}
 }
