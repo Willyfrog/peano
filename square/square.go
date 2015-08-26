@@ -2,10 +2,12 @@ package square
 
 import (
 	"fmt"
+	"image/color"
+
+	log "github.com/Sirupsen/logrus"
 	"github.com/Willyfrog/peano/drawing"
 	"github.com/Willyfrog/peano/point"
 	"github.com/Willyfrog/peano/utils"
-	"image/color"
 )
 
 type Square struct {
@@ -75,7 +77,9 @@ func (sq Square) Partition() [2][2]Square {
 	}
 
 	if pointsAssigned != len(sq.Points) {
-		panic(fmt.Sprintf("We missed some points while subdividing %d!=%d", pointsAssigned, len(sq.Points))) // don't want to find out later...
+		message := fmt.Sprintf("We missed some points while subdividing %d!=%d", pointsAssigned, len(sq.Points)) // don't want to find out later...
+		log.Fatal(message)
+		panic(message)
 	}
 	return sub
 }
@@ -89,7 +93,21 @@ func (sq *Square) Draw(canvas *drawing.Canvas) {
 	xe, ye := sq.End()
 	drawing.DrawSquare(xo, yo, xe, ye, path)
 	path.FillStroke()
+	//log.Debug(fmt.Sprintf("Result: %v", sq.Points))
+	var origin *point.Point
 	for _, pt := range sq.Points {
 		pt.Draw(canvas)
+		if origin != nil {
+			linepath := canvas.GetContext()
+			path.SetStrokeColor(color.RGBA{0x44, 0x44, 0x88, 0xff})
+			path.SetLineWidth(5)
+			drawing.DrawLine(origin.X, origin.Y, pt.X, pt.Y, linepath)
+			linepath.FillStroke()
+		}
+		origin = pt
 	}
+}
+
+func (sq *Square) Connect() point.PointList {
+	return point.PointList(sq.Points).Polyline(point.SortXY)
 }

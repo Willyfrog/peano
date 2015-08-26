@@ -3,15 +3,22 @@ package matrix
 
 import (
 	"fmt"
+	"image/color"
+
+	log "github.com/Sirupsen/logrus"
 	"github.com/Willyfrog/peano/drawing"
 	"github.com/Willyfrog/peano/point"
 	"github.com/Willyfrog/peano/square"
-	"image/color"
 )
 
 type Matrix struct {
 	Width   float32
 	Squares [][]square.Square
+}
+
+type position struct {
+	X int
+	Y int
 }
 
 func (m Matrix) allCellsAreFull() bool {
@@ -97,19 +104,66 @@ func New(width float32, size int) Matrix {
 	return nm
 }
 
-func (m *Matrix) Draw(canvas *drawing.Canvas) {
-	fmt.Println("drawing the matrix")
+func (m *Matrix) Draw(canvas *drawing.Canvas, strat Strategy) {
+	path := canvas.GetContext()
+	path.SetFillColor(color.RGBA{0xaa, 0xaa, 0xaa, 0xff})
+	path.SetStrokeColor(color.RGBA{0x99, 0x99, 0x99, 0xff})
+	path.SetLineWidth(2)
+	drawing.DrawSquare(0.0, 0.0, 1.0, 1.0, path)
+	log.Info("filling the background of the image, this might take some seconds")
+	path.FillStroke()
+	m.drawSquares(canvas, strat)
+}
+
+func (m *Matrix) drawSquares(canvas *drawing.Canvas, strat Strategy) {
+	finished := make(chan position)
+	numSquares := len(m.Squares) * len(m.Squares)
+	sentSquares := 0
+	for i, row := range m.Squares {
+		for j := range row {
+			go fillSquare(m.Squares[i][j], finished, strat)
+			sentSquares++
+			log.Debug(fmt.Sprintf("Sent [%d, %d] %d/%d", i, j, sentSquares, numSquares))
+		}
+	}
+	log.Debug("Waiting for squares to be filled.")
+	wait := make(chan bool)
+	go drawEach(finished, wait, numSquares, *m, canvas)
+	<-wait //synchronize
 	path := canvas.GetContext()
 	path.SetFillColor(color.RGBA{0xaa, 0xaa, 0xaa, 0xff})
 	path.SetStrokeColor(color.RGBA{0x44, 0x44, 0x44, 0xff})
 	path.SetLineWidth(5)
 	drawing.DrawSquare(0.0, 0.0, 1.0, 1.0, path)
-	path.FillStroke()
+	log.Debug("About to draw line connections")
+	for i, line := range strat.ConnectSquares(*m) {
+		log.Debug("Drawing the %dth line", i)
+		p1 := line[0]
+		p2 := line[1]
+		drawing.DrawLine(p1.X, p1.Y, p2.X, p2.Y, path)
+	}
+}
 
-	for _, row := range m.Squares {
-		for _, sq := range row {
-			sq.Draw(canvas)
+// fillSquare ...
+func fillSquare(sq square.Square, finished chan position, strat Strategy) {
+	pos := position{sq.X, sq.Y}
+	log.Debug(fmt.Sprintf("Connecting square [%d][%d]: %v", sq.X, sq.Y, pos))
+	strat.OrderPoints(sq)
+	finished <- pos
+}
+
+// drawSquare ...
+func drawEach(squares chan position, finish chan bool, numSquares int, m Matrix, canvas *drawing.Canvas) {
+	log.Debug("Waiting for squares to be filled.")
+	for posFilled := range squares {
+		squee := m.Squares[posFilled.X][posFilled.Y]
+		squee.Draw(canvas)
+		numSquares--
+		if (numSquares) < 1 {
+			log.Debug(fmt.Sprintf("Draw %v, waiting for %d squares left", posFilled, numSquares))
+			finish <- true
+			return
 		}
-
+		log.Debug(fmt.Sprintf("Draw %v, waiting for %d squares left", posFilled, numSquares))
 	}
 }

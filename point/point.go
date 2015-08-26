@@ -1,15 +1,22 @@
 package point
 
 import (
-	"github.com/Willyfrog/peano/drawing"
+	"fmt"
 	"image/color"
 	"math/rand"
+	"strings"
+
+	"github.com/Willyfrog/peano/drawing"
 )
 
 type Point struct {
 	X float32
 	Y float32
 }
+
+type PointList []*Point
+
+type SortFunction func(*Point, *Point) bool
 
 // Random
 // Get a random point whose coordinates are in the range: [0.0, 1.0)
@@ -34,4 +41,24 @@ func (pt *Point) Draw(canvas *drawing.Canvas) {
 	path.SetLineWidth(5)
 	drawing.DrawPoint(pt.X, pt.Y, path)
 	path.FillStroke()
+}
+
+func (ps PointList) Polyline(sortFunc SortFunction) PointList {
+	//ps.QuickSort(sortFunc)
+	QuickSort(ps, sortFunc)
+	return ps
+}
+
+//String generate a string form a list of points
+//mostly for debugging purposes
+func (pl *PointList) String() string {
+	st := make([]string, len(*pl))
+	for _, p := range *pl {
+		st = append(st, p.String())
+	}
+	return strings.Join(st, ", ")
+}
+
+func (p *Point) String() string {
+	return fmt.Sprintf("[%f, %f]", p.X, p.Y)
 }
