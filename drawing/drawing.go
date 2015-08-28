@@ -1,11 +1,10 @@
 package drawing
 
 import (
-	"github.com/llgcode/draw2d/draw2dimg"
 	"image"
-)
 
-const SCALE = 1000
+	"github.com/llgcode/draw2d/draw2dimg"
+)
 
 type Canvas struct {
 	image.RGBA
@@ -22,7 +21,7 @@ type Drawable interface {
 	Draw(canvas *Canvas)
 }
 
-// ToScale transforms the [0.0, 1.0) space into [0, SCALE)
+// ToScale transforms the [0.0, 1.0) space into [0, canvas.size)
 func (cnv CanvasContext) ToScale(x float32) float64 {
 	return float64(x * float32(cnv.size))
 }
