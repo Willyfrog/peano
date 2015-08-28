@@ -46,48 +46,6 @@ func SortDiagonal2(p1, p2 *Point) bool {
 	return (p1.X + (1.0 - p1.Y)) >= (p2.X + (1.0 - p2.Y))
 }
 
-// Quicksort sorts a list of points based on one of the sorting functions
-func (pnts *PointList) QuickSort(sortFunc SortFunction) PointList {
-	fmt.Println(fmt.Sprintf("Quicksorting %d elements", len(*pnts)))
-	pnts.quicksort(0, len(*pnts)-1, sortFunc)
-	return *pnts
-}
-func (pnts *PointList) quicksort(lo, hi int, sortFunc SortFunction) {
-	fmt.Println(fmt.Sprintf("QS [%d, %d]", lo, hi))
-
-	if hi > lo {
-		p := pnts.partition(lo, hi, sortFunc)
-		fmt.Println(fmt.Sprintf("QS'p is %d", p))
-		pnts.quicksort(lo, p, sortFunc)
-		pnts.quicksort(p+1, hi, sortFunc)
-	}
-}
-
-func (pnts *PointList) partition(lo, hi int, sortFunc SortFunction) int {
-	A := *pnts
-	pivot := A[lo]
-	i := lo - 1
-	j := hi + 1
-	for {
-
-		j = j - 1
-		for sortFunc(A[j], pivot) {
-			j = j - 1
-		}
-
-		i = i + 1
-		for sortFunc(pivot, A[i]) {
-			i = i + 1
-		}
-
-		if i < j {
-			A[j], A[i] = A[i], A[j]
-		} else {
-			return j
-		}
-	}
-}
-
 func QuickSort(data PointList, sortFunc SortFunction) {
 	if len(data) < 2 {
 		return
