@@ -86,13 +86,24 @@ func (sq Square) Partition() [2][2]Square {
 
 func (sq *Square) Draw(canvas *drawing.Canvas) {
 	path := canvas.GetContext()
-	path.SetFillColor(color.RGBA{0x44, 0x44, 0x44, 0x00})
-	path.SetStrokeColor(color.RGBA{0x44, 0x44, 0x44, 0xff})
+	if log.StandardLogger().Level == log.DebugLevel {
+		if sq.X == 0 && sq.Y == 0 {
+			path.SetStrokeColor(color.RGBA{0x44, 0xff, 0x44, 0xff})
+		} else if sq.X == 0 && sq.Y == 1 {
+			path.SetStrokeColor(color.RGBA{0xff, 0x44, 0x44, 0xff})
+		} else {
+			path.SetStrokeColor(color.RGBA{0xcc, 0xcc, 0xcc, 0xff})
+		}
+	} else {
+		path.SetStrokeColor(color.RGBA{0xcc, 0xcc, 0xcc, 0xff})
+	}
+
 	path.SetLineWidth(1)
 	xo, yo := sq.Origin()
 	xe, ye := sq.End()
 	drawing.DrawSquare(xo, yo, xe, ye, path)
-	path.FillStroke()
+	path.Stroke()
+	//path.FillStroke()
 	//log.Debug(fmt.Sprintf("Result: %v", sq.Points))
 	var origin *point.Point
 	for _, pt := range sq.Points {
@@ -102,7 +113,7 @@ func (sq *Square) Draw(canvas *drawing.Canvas) {
 			path.SetStrokeColor(color.RGBA{0x44, 0x44, 0x88, 0xff})
 			path.SetLineWidth(5)
 			drawing.DrawLine(origin.X, origin.Y, pt.X, pt.Y, linepath)
-			linepath.FillStroke()
+			linepath.Stroke()
 		}
 		origin = pt
 	}
@@ -110,4 +121,8 @@ func (sq *Square) Draw(canvas *drawing.Canvas) {
 
 func (sq *Square) Connect() point.PointList {
 	return point.PointList(sq.Points).Polyline(point.SortXY)
+}
+
+func (sq *Square) String() String {
+	return fmt.Sprintf(point.PointList(sq.Points).String())
 }

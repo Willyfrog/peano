@@ -129,18 +129,28 @@ func (m *Matrix) drawSquares(canvas *drawing.Canvas, strat Strategy) {
 	log.Debug("Waiting for squares to be filled.")
 	wait := make(chan bool)
 	go drawEach(finished, wait, numSquares, *m, canvas)
-	<-wait //synchronize
+	_ = <-wait //synchronize
 	path := canvas.GetContext()
-	path.SetFillColor(color.RGBA{0xaa, 0xaa, 0xaa, 0xff})
+	//path.SetFillColor(color.RGBA{0xaa, 0xaa, 0xaa, 0xff})
 	path.SetStrokeColor(color.RGBA{0x44, 0x44, 0x44, 0xff})
 	path.SetLineWidth(5)
 	drawing.DrawSquare(0.0, 0.0, 1.0, 1.0, path)
+	//path.FillStroke()
 	log.Debug("About to draw line connections")
 	for i, line := range strat.ConnectSquares(*m) {
-		log.Debug("Drawing the %dth line", i)
-		p1 := line[0]
-		p2 := line[1]
-		drawing.DrawLine(p1.X, p1.Y, p2.X, p2.Y, path)
+		//log.Debug(fmt.Sprintf("Drawing the %dth line: %v", i, line))
+		if len(line) == 2 {
+			p1 := line[0]
+			p2 := line[1]
+			path2 := canvas.GetContext()
+			//path2.SetFillColor(color.RGBA{0xaa, 0xaa, 0xaa, 0xff})
+			path2.SetStrokeColor(color.RGBA{0x44, 0x44, 0x44, 0xff})
+			path2.SetLineWidth(1)
+			drawing.DrawLine(p1.X, p1.Y, p2.X, p2.Y, path2)
+			path2.FillStroke()
+		} else {
+			log.Error(fmt.Sprintf("Line %d didn't contain 2 points", i)) // shouldn't happen :/
+		}
 	}
 }
 
@@ -166,4 +176,6 @@ func drawEach(squares chan position, finish chan bool, numSquares int, m Matrix,
 		}
 		log.Debug(fmt.Sprintf("Draw %v, waiting for %d squares left", posFilled, numSquares))
 	}
+	log.Debug("Notify of the end of drawing")
+	finish <- true
 }

@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"math/rand"
 	"strings"
+	"time"
 
 	"github.com/Willyfrog/peano/drawing"
 )
@@ -27,6 +28,7 @@ func Random() Point {
 // RandomSlice
 // get a length of random points
 func RandomSlice(length int) []Point {
+	rand.Seed(time.Now().UTC().UnixNano())
 	pl := make([]Point, length)
 	for i := range pl {
 		pl[i] = Random()

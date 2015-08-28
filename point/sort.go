@@ -36,6 +36,16 @@ func Sortyx(p1, p2 *Point) bool {
 	return (p1.Y < p2.Y) || (p1.Y == p2.Y && p1.X <= p2.X)
 }
 
+// SortDiagonal \
+func SortDiagonal(p1, p2 *Point) bool {
+	return (p1.X + p1.Y) >= (p2.X + p2.Y)
+}
+
+// SortDiagonal2 /
+func SortDiagonal2(p1, p2 *Point) bool {
+	return (p1.X + (1.0 - p1.Y)) >= (p2.X + (1.0 - p2.Y))
+}
+
 // Quicksort sorts a list of points based on one of the sorting functions
 func (pnts *PointList) QuickSort(sortFunc SortFunction) PointList {
 	fmt.Println(fmt.Sprintf("Quicksorting %d elements", len(*pnts)))

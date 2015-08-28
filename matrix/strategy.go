@@ -7,5 +7,5 @@ import (
 
 type Strategy interface {
 	OrderPoints(sq square.Square)
-	ConnectSquares(m Matrix) [][2]*point.Point
+	ConnectSquares(m Matrix) [][]*point.Point
 }
