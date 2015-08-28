@@ -19,6 +19,7 @@ func main() {
 	size := flag.Int("size", 1024, "Size of the file to be generated")
 	debug := flag.Bool("d", false, "Print debug information")
 	flag.Parse()
+
 	if *debug {
 		log.SetLevel(log.DebugLevel)
 		log.Debug("Debug enabled")

@@ -39,7 +39,8 @@ func (m Matrix) GetSquare(i, j int) square.Square {
 }
 
 // FindSmallerCellSize
-// find the matrix with the smaller cell size
+// find the matrix with the smaller cell size which contains
+// points inside its cells
 func FindSmallerCellSize(pointList *[]point.Point) Matrix {
 	squares := make([][]square.Square, 1)
 	squares[0] = make([]square.Square, 1)
@@ -104,6 +105,7 @@ func New(width float32, size int) Matrix {
 	return nm
 }
 
+// Draw the matrix into the canvas using the `strat` Strategy
 func (m *Matrix) Draw(canvas *drawing.Canvas, strat Strategy) {
 	path := canvas.GetContext()
 	path.SetFillColor(color.RGBA{0xaa, 0xaa, 0xaa, 0xff})
@@ -154,7 +156,6 @@ func (m *Matrix) drawSquares(canvas *drawing.Canvas, strat Strategy) {
 	}
 }
 
-// fillSquare ...
 func fillSquare(sq square.Square, finished chan position, strat Strategy) {
 	pos := position{sq.X, sq.Y}
 	log.Debug(fmt.Sprintf("Connecting square [%d][%d]: %v", sq.X, sq.Y, pos))
@@ -162,7 +163,6 @@ func fillSquare(sq square.Square, finished chan position, strat Strategy) {
 	finished <- pos
 }
 
-// drawSquare ...
 func drawEach(squares chan position, finish chan bool, numSquares int, m Matrix, canvas *drawing.Canvas) {
 	log.Debug("Waiting for squares to be filled.")
 	for posFilled := range squares {

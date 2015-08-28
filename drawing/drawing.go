@@ -1,3 +1,5 @@
+// Package drawing abstracts away some of the draw2d complexities
+// by being opinionated on how to do some tasks (like saving only png)
 package drawing
 
 import (
@@ -26,6 +28,7 @@ func (cnv CanvasContext) ToScale(x float32) float64 {
 	return float64(x * float32(cnv.size))
 }
 
+// NewCanvas initialize the canvas
 func NewCanvas(size int, fileName string) *Canvas {
 	var cnv *Canvas
 	cnv = new(Canvas)
@@ -36,10 +39,12 @@ func NewCanvas(size int, fileName string) *Canvas {
 	return cnv
 }
 
+// Save the contexts into a final image
 func (c *Canvas) Save() {
 	draw2dimg.SaveToPngFile(c.filename, c)
 }
 
+// Get a new Graphic Context where to draw
 func (c *Canvas) GetContext() *CanvasContext {
 	gc := draw2dimg.NewGraphicContext(&(c.RGBA))
 	cnv := CanvasContext{*gc, (*c).size}

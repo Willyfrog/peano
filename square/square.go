@@ -1,3 +1,4 @@
+// Squares are the components of a Matrix
 package square
 
 import (
@@ -17,38 +18,33 @@ type Square struct {
 	Points []*point.Point
 }
 
-// fitsIn
-// given a point.Point, check if it's inside it's boundaries
+// fitsIn Given a point.Point, check if it's inside it's boundaries
 func (sq Square) fitsIn(pnt point.Point) bool {
 	xo, yo := sq.Origin()
 	xe, ye := sq.End()
 	return utils.Between(pnt.X, xo, xe) && utils.Between(pnt.Y, yo, ye)
 }
 
-// Origin
-// get the equivalent of (0,0) for this square
+// Origin Get the equivalent of (0,0) for this square
 func (sq Square) Origin() (x, y float32) {
 	x = (float32(sq.X)) * sq.Width
 	y = (float32(sq.Y)) * sq.Width
 	return
 }
 
-// End
-// get the equivalent of (1,1) for this square
+// End Get the equivalent of (1,1) for this square
 func (sq Square) End() (x, y float32) {
 	x = (float32(sq.X + 1)) * sq.Width
 	y = (float32(sq.Y + 1)) * sq.Width
 	return
 }
 
-// Empty
-// are any points inside?
+// Empty are any points inside?
 func (sq Square) Empty() bool {
 	return len(sq.Points) == 0
 }
 
-// Partition
-// given a square subidivide it into 4
+// Partition given a square subidivide it into 4
 func (sq Square) Partition() [2][2]Square {
 	width := sq.Width / 2.0
 	sub := [2][2]Square{
@@ -84,6 +80,10 @@ func (sq Square) Partition() [2][2]Square {
 	return sub
 }
 
+// Draw the square.
+// Remember that the square should be ordered previously to make sure it
+// prints in the intended order. Take a look at
+// `github.com/Willyfrog/peano/matrix.Strategy` Interface
 func (sq *Square) Draw(canvas *drawing.Canvas) {
 	path := canvas.GetContext()
 	if log.StandardLogger().Level == log.DebugLevel {
@@ -123,6 +123,7 @@ func (sq *Square) Connect() point.PointList {
 	return point.PointList(sq.Points).Polyline(point.SortXY)
 }
 
+// String make a printable version of the square and its contents
 func (sq *Square) String() string {
 	pl := point.PointList(sq.Points)
 	return fmt.Sprintf("[%d, %d]:\n%s", sq.X, sq.Y, (&pl).String())

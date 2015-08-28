@@ -1,9 +1,8 @@
 package point
 
-import (
-	"fmt"
-)
-
+// Several similar sort functions. A SortXY will give more importance
+// to X then to Y. If any of those characters is lowercase, it'll mean
+// that the order in that case is reversed.
 func SortXY(p1, p2 *Point) bool {
 	return (p1.X > p2.X) || (p1.X == p2.X && p1.Y >= p2.Y)
 }
@@ -46,6 +45,9 @@ func SortDiagonal2(p1, p2 *Point) bool {
 	return (p1.X + (1.0 - p1.Y)) >= (p2.X + (1.0 - p2.Y))
 }
 
+// Quicksort implementation. This one takes a sorting function
+// instead of asuming that the less than is the only posible ordering.
+// It's recursive, so it may fail for very big datasets
 func QuickSort(data PointList, sortFunc SortFunction) {
 	if len(data) < 2 {
 		return

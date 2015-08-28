@@ -1,3 +1,5 @@
+// package point
+// the smallest unit in this project.
 package point
 
 import (
@@ -21,6 +23,8 @@ type SortFunction func(*Point, *Point) bool
 
 // Random
 // Get a random point whose coordinates are in the range: [0.0, 1.0)
+// if it's not being called from RandomSlice, remember to call
+// `rand.Seed` previously so you get different results each time.
 func Random() Point {
 	return Point{X: rand.Float32(), Y: rand.Float32()}
 }
@@ -36,6 +40,7 @@ func RandomSlice(length int) []Point {
 	return pl
 }
 
+// Draw the point into the canvas
 func (pt *Point) Draw(canvas *drawing.Canvas) {
 	path := canvas.GetContext()
 	path.SetFillColor(color.RGBA{0x88, 0xff, 0x88, 0xff})
@@ -45,6 +50,7 @@ func (pt *Point) Draw(canvas *drawing.Canvas) {
 	path.FillStroke()
 }
 
+// Polyline define a polyline by ordering an slice of points
 func (ps PointList) Polyline(sortFunc SortFunction) PointList {
 	//ps.QuickSort(sortFunc)
 	QuickSort(ps, sortFunc)
@@ -61,6 +67,7 @@ func (pl *PointList) String() string {
 	return strings.Join(st, ", ")
 }
 
+// String marshalls a point into a string for reading
 func (p *Point) String() string {
 	return fmt.Sprintf("[%f, %f]", p.X, p.Y)
 }

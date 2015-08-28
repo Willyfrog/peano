@@ -14,10 +14,12 @@ type SnakeStrategy struct {
 	size int
 }
 
+// NewSnake get a pointer to the snake strategy
 func NewSnake(size int) *SnakeStrategy {
 	return &SnakeStrategy{size - 1}
 }
 
+// Order points inside a square
 func (s SnakeStrategy) OrderPoints(sq square.Square) {
 	if sq.X == 0 || sq.X == s.size {
 		if sq.Y%2 == 0 {
@@ -31,6 +33,7 @@ func (s SnakeStrategy) OrderPoints(sq square.Square) {
 
 }
 
+// Order squares inside a matrix
 func (s SnakeStrategy) ConnectSquares(m matrix.Matrix) [][]*point.Point {
 	pl := make([][]*point.Point, 0)
 	var curr, prev square.Square
