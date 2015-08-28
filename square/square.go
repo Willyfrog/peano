@@ -123,6 +123,7 @@ func (sq *Square) Connect() point.PointList {
 	return point.PointList(sq.Points).Polyline(point.SortXY)
 }
 
-func (sq *Square) String() String {
-	return fmt.Sprintf(point.PointList(sq.Points).String())
+func (sq *Square) String() string {
+	pl := point.PointList(sq.Points)
+	return fmt.Sprintf("[%d, %d]:\n%s", sq.X, sq.Y, (&pl).String())
 }
