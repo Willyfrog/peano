@@ -1,0 +1,227 @@
+#+title: Ingeniería Algorítmica: Implementación de una Space Filling Curve sobre una matriz
+#+author: Guillermo Vayá Pérez
+#+email: <guivaya@gmail.com>
+
+* Introducción
+
+  El problema planteado en esta asignatura fue la creación de un algoritmo que implemente una curva
+  que rellene el espacio. Hay buena cantidad de éstas, siendo ejemplos conocidos las de Hilbert y Peano.
+
+  Sin embargo no es sólo este algoritmo el que nos interesa, sino su aplicación sobre una matriz en la que
+  se han asignado una gran cantidad de puntos. Mediante estas dos técnicas se quiere cubrir mediante una
+  polilínea que no se intersecte a sí misma. De esta manera la curva implementara el recorrido entre celdas
+  y dentro de cada celda se implementara un algoritmo diferente que establezca una polilínea contenida en
+  la general.
+
+* Consideraciones
+
+  Todas las celdas tienen que tener puntos. Esto requiere un primer algoritmo de conseguir la matriz con las
+  celdas mas pequeñas.
+
+* Herramientas utilizadas
+
+  Inicialmente se comenzó la creación del código en /Clojure/ junto con una librería /wrapper/ de
+  /Processing/. Debido a la falta de experiencia con el paradigma funcional, se volvió bastante complicada de 
+  mantener y seguir en poco tiempo. El desarrollo existente puede revisarse en [[https://github.com/Willyfrog/hilbert][el siguiente repositorio de Github]]
+
+  Posteriormente se planteo un cambio de paradigma y lenguaje, pasando a desarrollarse en /Go/ junto con la
+  librería /draw2d/. Si bien con esta decisión se perdía interactividad, se ganaba en velocidad de desarrollo,
+  lo cual ha sido crítico para poder cumplir fechas.
+
+** Documentación
+
+   La mayor parte del código está comentado. Esto puede verse o bien en las fuentes del propio proyecto o
+   bien utilizando una herramienta llamada /godoc/, incluida con la distribución de /Go/.
+   
+   Para visualizar el código de esta forma ejecutar:
+
+   #+Begin_src sh
+     godoc -http :8080
+   #+End_src
+
+   Tras ello solo hay que apuntar el navegador a ~http://localhost:8080~ para poder navegar la documentación
+   con comodidad.
+
+* Proceso de creación
+
+** Primera versión del algoritmo
+
+*** Algoritmo
+
+   Inicio: Se establece una región cuadrada que comprende todos los puntos.
+
+   1. Se selecciona una región que no tenga punto asignado.
+   2. Contamos los puntos dentro de la celda 
+      a. Si contiene más de un punto, se subdivide en cuatro regiones cuadradas, dejando la región previa como
+      padre de las cuatro.
+      b. Si sólo tiene un punto, se asigna el punto a la región.
+      c. Si no contuviera ningún punto, se selecciona el centro de la región como si fuera el punto
+   3. Si quedan regiones sin punto asignado, se vuelve a 1.
+
+*** Problemas
+    - La matriz no era tal, sino una región con subdivisiones en su interior.
+    - Al estar creando puntos nuevos, el resultado seria una linea poligonal sin cortes, pero no con los puntos
+      iniciales. Si se eliminaran estos puntos extra, ya no se podría asegurar que la linea no se cortara a si misma
+
+*** Comentarios
+    A pesar de no ser un algoritmo válido, he de decir que me gusta bastante ya que muestra una propiedad interesante:
+    que añadiendo puntos se puede conseguir la polilínea sin cortes. Lo que quizás sea interesante para la resolución
+    de problemas.
+
+** Estudiando
+
+   Tras este primer intento de algoritmo, pase bastante tiempo leyendo /papers/ sobre el tema, pero muchos de ellos no
+   aplicaban. Esto sucedía bien porque aprovechaban las propiedades de la curva pero nunca planteaban su implementación o porque
+   las implementaciones dadas eran basadas en un sistema-L que básicamente no me permitía controlar la creación de la
+   curva.
+
+   Finalmente decidí ir implementando las partes que conocía aunque esto supusiera una posible reescritura posterior si algo no
+   cuadraba en el modelo planteado.
+
+   Este cambio supuso que la propia creación de la matriz inicial supusiera un problema para grandes cantidades de puntos ya que
+   al no haberse planteado por no parecer parte del problema, se hacia mediante un algoritmo de fuerza bruta
+
+*** Algoritmo
+
+    1. n = 0
+    2. se genera una matriz de 2^n celdas y se guarda una matriz a la 
+    3. se recorren las celdas para asignarles los puntos que estén incluidos.
+    4. Se comprueba si todas las celdas tienen puntos asignados
+    5. Si todas las celdas tienen puntos asignados
+       1) incrementa n en 1 unidad.
+       2) vuelta al paso 2.
+    6. si alguna de las celdas no contiene puntos, se recupera la matriz anterior y se presenta como resultado
+
+*** Problemas
+    Muy lenta al ser O(n^m) aunque inicialmente pasa desapercibida, ya que para notar la lentitud hay que tener una gran densidad
+    de puntos en el plano que provoque la generación de matrices muy grandes.
+
+*** Comentarios
+    - Esta lentitud me hizo darme cuenta de la importancia de pasos previos para la preparación de datos en el computo final
+      de tiempos.
+    - La colocación de puntos se volvió mucho mas sencilla una vez decidí restringir el espacio de puntos al plano [0, 1)x[0,1)
+      mediante valores de coma flotante. De esta manera tenia un espacio de coordenadas continuas y restringidas, que me permitían
+      atajar el problema con mas facilidad, siendo fácilmente cambiable la escala en pasos posteriores si esto fuera necesario.
+
+** Resolviendo
+
+   El momento de finalizar este estudio llegó cuando me di cuenta que estaba tratando de resolverlo todo con una de dos curvas que
+   rellenan el espacio: /Hilbert/ y /Peano/. Las cuales tienen algoritmos que no conseguía aplicar a mi manera de entender el
+   problema.
+
+   En ese momento fue cuando entendí que la curva en sí no era lo importante, sino establecer una base que pudiera permitir llegar
+   a resolverlo y eso es lo que creo que he conseguido (o al menos he quedado bastante cerca) mientras que se utilizan algoritmos
+   mas sencillos para llegar a un punto cercano.
+
+   Por ello quizás en el presente programa no sean tan importantes algunos de los algoritmos implementados, si no la arquitectura
+   generada para poder aplicarlos.
+
+* Algoritmos utilizados
+
+  El algoritmo general para el proceso es el siguiente (a continuación se especifican algunos de ellos)
+  1. Generación de puntos. Simplemente generamos una lista de puntos.
+  2. Calculo de la matriz con celda mínima no vacía.
+  3. Ordenación de los puntos de cada celda.
+  4. Conexión de celdas.
+
+  La parte de ordenación de los puntos de una celda se ha paralelizado para acelerar este proceso pudiendo procesar 
+  N celdas a la vez, donde N es el número de /cores/ de la máquina donde se ejecuta.
+
+** Cálculo de Matriz
+   Es una variación del método original.
+   1. Creamos una matriz de 1x1
+   2. Subdividimos la matriz, generando una nueva. Para ello
+      1. Recorremos cada celda y la dividimos en 4
+      2. En cada sub-celda asignamos los puntos del padre entre las hijas
+      3. devolvemos la matriz de 4x4 al proceso padre quien se encarga de colocarlos
+         en su sitio dentro de la matriz
+
+** Ordenación de puntos de una celda
+
+   Inicialmente comencé con solo ordenar en base a su X, dando prioridad a la Y en caso de compartir X. Pero tras
+   observar algunas ejecuciones del algoritmo, decidí añadirle algo de complejidad. Lo que mejoro los resultados.
+   
+   1. Si la coordenada X de la celda es distinto del 0 o del máximo, se ordena en función de la coordenada X
+      del punto.
+   2. Si no, y el modulo de la coordenada Y del punto es 0, ordenamos en diagonal principal.
+   3. Si no, ordenamos en la diagonal inversa.
+
+** Conexión de las celdas
+
+   Como se ha comentado antes, la idea inicial de ordenación de celdas era utilizar un algoritmo que implementara bien la curva 
+   de /Peano/ o la de /Hilbert/. Pero finalmente opte por una curva que recubra el espacio mucho más sencilla, que básicamente imita
+   la forma en que la recubriría una serpiente o en zigzag (desconozco si tiene nombre)
+
+*** Algoritmo
+    1. Se coge la celda ~(0, 0)~
+    2. Se recorren las X y las Y en bucle
+    3. para cada valor X,Y se calcula su anterior en base a su posición:       
+       1. nada si ~(X, Y)~ es ~(0, 0)~
+       2. ~X - 1~ si el módulo de Y es 0 y X no es ni 0 ni el máximo
+       3. ~X + 1~ si el módulo de Y es 1 y X no es ni 0 ni el máximo
+       4. ~Y - 1~ e.o.c.
+
+* Arquitectura
+
+  En la realización de este proyecto me di cuenta que buena parte de los algoritmos podrían ser intercambiables. De esta manera
+  cree una interfaz mediante la cual podrían implementarse varias estrategias que definieran la ordenación tanto interna como
+  externa y por lo tanto se pudiera elegir la estrategia a probar.
+
+  De esta manera si alguien quiere crear una nueva estrategia, mi sugerencia seria crear un nuevo fichero en la carpeta
+  /strategy/ con el nombre de la estrategia para facilitar su identificación, crear un tipo con el nombre de la estrategia
+  e implementar los dos métodos
+
+  Ejemplo:
+  
+  #+Begin_src go
+    // Creamos un tipo con los datos extra que podamos
+    // necesitar en los metodos
+    type SnakeStrategy struct {
+            size int
+    }
+
+    // ordena los puntos dentro de un cuadrado
+    func (s SnakeStrategy) OrderPoints(sq square.Square) {
+    }
+
+    // ordena los cuadrados dentro de una matriz
+    func (s SnakeStrategy) ConnectSquares(m matrix.Matrix) [][]*point.Point {
+    }
+
+  #+end_src
+
+* A futuro
+
+Quedan como tareas futuras implementables por el autor u otros alumnos de la asignatura:
+
+** Nuevas estrategias.
+
+   Dado que el código esta planteado para soportar múltiples estrategias de ordenación, debería ser
+   fácilmente implementables nuevas estrategias de ordenación de las celdas y los puntos contenidos,
+   generando así nuevos patrones de no intersección.
+
+** Mejora del desarrollo
+
+   El algoritmo de matriz implementado podría mejorarse aun mas si se paralelizaran algunas de sus partes (algunas ya lo están,
+   pero no todas) con lo que se ganaría tiempo.
+   
+   Sucede igualmente con el algoritmo de QuickSort, que además de ser recursivo (lo que impone un limite en la densidad de puntos
+   dentro de una celda) tampoco se ha paralelizado, lo que generaría mas ganancia de tiempo en grandes conjuntos de datos
+
+* Conclusiones
+
+  Creo que lo mejor que he sacado de realizar la práctica de Ingeniería Algorítmica es un sentido de practicidad a la
+  hora de buscar soluciones a problemas. Creo que por ello estoy muy contento con el resultado, ya que aun sin
+  haber llegado a resolver el problema tal y como me lo planteaba originalmente, si he resuelto parte y he generado
+  un pequeño /framework/ para poder resolver problemas parecidos con sencillez.
+
+* Bibliografía y enlaces
+
+ - "Space Filling Curves and Mathematical Programming" ~ Arthur R. Butz
+
+ - "Amplification Matrix Iteration Algorithm to Generate the Hilbert-Peano Curve" ~ Zhengwen Peng, Xin Lu
+
+ - "Introduction to Global Optimization Exploiting Space-Filling Curve" ~ D. Sergeyev et al.
+
+ - Implementación de la curva de /Hilbert/ en menos de 140 caracteres
+ http://comments.gmane.org/gmane.org.user-groups.python.argentina/43309

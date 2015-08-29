@@ -1,2 +1,2 @@
 # peano
-peano curve implementation
+space filling curve implementation
