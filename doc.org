@@ -225,3 +225,6 @@ Quedan como tareas futuras implementables por el autor u otros alumnos de la asi
 
  - Implementación de la curva de /Hilbert/ en menos de 140 caracteres
  http://comments.gmane.org/gmane.org.user-groups.python.argentina/43309
+
+ - La ultima version tanto de este documento en formato .org como de las fuentes del programa se pueden conseguir en
+   https://github.com/Willyfrog/peano
