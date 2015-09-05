@@ -1,6 +1,7 @@
 package drawing
 
-import kit "github.com/llgcode/draw2d/draw2dkit"
+// import kit "github.com/llgcode/draw2d/draw2dkit"
+import kit "github.com/ninjasphere/draw2d/draw2dkit"
 
 // DrawSquare will get a canvascontext and draw an empty square
 func DrawSquare(xo, yo, xe, ye float32, path *CanvasContext) {

@@ -6,6 +6,8 @@ import (
 	"image"
 
 	"github.com/llgcode/draw2d/draw2dimg"
+
+	//"github.com/llgcode/draw2d/draw2dimg"
 )
 
 type Canvas struct {
