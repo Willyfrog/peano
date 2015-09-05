@@ -39,7 +39,7 @@
      godoc -http :8080
    #+End_src
 
-   Tras ello solo hay que apuntar el navegador a ~http://localhost:8080~ para poder navegar la documentación
+   Tras ello solo hay que apuntar el navegador a /http://localhost:8080/ para poder navegar la documentación
    con comodidad.
 
 * Proceso de creación
@@ -153,13 +153,13 @@
    la forma en que la recubriría una serpiente o en zigzag (desconozco si tiene nombre)
 
 *** Algoritmo
-    1. Se coge la celda ~(0, 0)~
+    1. Se coge la celda /(0, 0)/
     2. Se recorren las X y las Y en bucle
     3. para cada valor X,Y se calcula su anterior en base a su posición:       
-       1. nada si ~(X, Y)~ es ~(0, 0)~
-       2. ~X - 1~ si el módulo de Y es 0 y X no es ni 0 ni el máximo
-       3. ~X + 1~ si el módulo de Y es 1 y X no es ni 0 ni el máximo
-       4. ~Y - 1~ e.o.c.
+       1. nada si /(X, Y)/ es /(0, 0)/
+       2. /X - 1/ si el módulo de Y es 0 y X no es ni 0 ni el máximo
+       3. /X + 1/ si el módulo de Y es 1 y X no es ni 0 ni el máximo
+       4. /Y - 1/ e.o.c.
 
 * Arquitectura
 
@@ -217,14 +217,20 @@ Quedan como tareas futuras implementables por el autor u otros alumnos de la asi
 
 * Bibliografía y enlaces
 
- - "Space Filling Curves and Mathematical Programming" ~ Arthur R. Butz
+ - "Space Filling Curves and Mathematical Programming" - Arthur R. Butz
 
- - "Amplification Matrix Iteration Algorithm to Generate the Hilbert-Peano Curve" ~ Zhengwen Peng, Xin Lu
+ - "Amplification Matrix Iteration Algorithm to Generate the Hilbert-Peano Curve" - Zhengwen Peng, Xin Lu
 
- - "Introduction to Global Optimization Exploiting Space-Filling Curve" ~ D. Sergeyev et al.
+ - "Introduction to Global Optimization Exploiting Space-Filling Curve" - D. Sergeyev et al.
 
  - Implementación de la curva de /Hilbert/ en menos de 140 caracteres
  http://comments.gmane.org/gmane.org.user-groups.python.argentina/43309
 
- - La ultima version tanto de este documento en formato .org como de las fuentes del programa se pueden conseguir en
+ - La ultima versión tanto de este documento en formato ".org" como de las fuentes del programa se pueden conseguir en
    https://github.com/Willyfrog/peano
+
+* TODO cambiar algoritmo a angular (y/x)
+
+* TODO enviar el ejecutable para linux
+
+
