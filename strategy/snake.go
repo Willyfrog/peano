@@ -21,16 +21,18 @@ func NewSnake(size int) *SnakeStrategy {
 
 // Order points inside a square
 func (s SnakeStrategy) OrderPoints(sq square.Square) {
-	if sq.X == 0 || sq.X == s.size {
-		if sq.Y%2 == 0 {
-			s.orderPoints(sq, point.SortDiagonal)
-		} else {
-			s.orderPoints(sq, point.SortDiagonal2)
-		}
+	modY := sq.Y % 2
+	if sq.X == 0 && modY == 0 {
+		s.orderPoints(sq, point.SortCounterRadial(sq.BottomLeft()))
+	} else if sq.X == 0 && modY == 1 {
+		s.orderPoints(sq, point.SortRadial(sq.End()))
+	} else if sq.X == s.size && modY == 0 {
+		s.orderPoints(sq, point.SortRadial(sq.TopRight()))
+	} else if sq.X == s.size && modY == 1 {
+		s.orderPoints(sq, point.SortCounterRadial(sq.Origin()))
 	} else {
 		s.orderPoints(sq, point.SortXY)
 	}
-
 }
 
 // Order squares inside a matrix

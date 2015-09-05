@@ -35,6 +35,36 @@ func Sortyx(p1, p2 *Point) bool {
 	return (p1.Y < p2.Y) || (p1.Y == p2.Y && p1.X <= p2.X)
 }
 
+// SortFromRadial Sorts using a tangential from a center point
+// this sorter is different from the rest in that it returns the actual sort
+// as it needs an origin
+func SortRadial(x, y float32) func(*Point, *Point) bool {
+	return func(p1, p2 *Point) bool {
+		return tan(p1, x, y) >= tan(p2, x, y)
+	}
+}
+
+func SortCounterRadial(x, y float32) func(*Point, *Point) bool {
+	return func(p1, p2 *Point) bool {
+		return tan(p1, x, y) <= tan(p2, x, y)
+	}
+}
+
+func tan(p1 *Point, x, y float32) float32 {
+	var tan1 float32
+	x1, y1 := movePoint(p1, x, y)
+	if x1 != 0.0 {
+		tan1 = y1 / x1
+	} else {
+		tan1 = 1.0
+	}
+	return tan1
+}
+
+func movePoint(p1 *Point, x, y float32) (float32, float32) {
+	return p1.X - x, p1.Y - y
+}
+
 // SortDiagonal \
 func SortDiagonal(p1, p2 *Point) bool {
 	return (p1.X + p1.Y) >= (p2.X + p2.Y)

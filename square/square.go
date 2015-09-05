@@ -32,6 +32,20 @@ func (sq Square) Origin() (x, y float32) {
 	return
 }
 
+// TopRight Get the equivalent of (0,1) for this square
+func (sq Square) TopRight() (x, y float32) {
+	x = (float32(sq.X)) * sq.Width
+	y = (float32(sq.Y + 1)) * sq.Width
+	return
+}
+
+// BottomLeft Get the equivalent of (1,0) for this square
+func (sq Square) BottomLeft() (x, y float32) {
+	x = (float32(sq.X + 1)) * sq.Width
+	y = (float32(sq.Y)) * sq.Width
+	return
+}
+
 // End Get the equivalent of (1,1) for this square
 func (sq Square) End() (x, y float32) {
 	x = (float32(sq.X + 1)) * sq.Width
